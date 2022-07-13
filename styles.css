@@ -1,5 +1,11 @@
 body {
   font-family: "Arial", sans-serif;
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 section {
@@ -19,7 +25,7 @@ section {
   grid-template-rows: 5% 25% 5% 25% 5% 25% 5%;
   width: 400px;
   height: 400px;
-  margin: 2% auto;
+  margin: 8% auto;
 }
 
 .dot {
