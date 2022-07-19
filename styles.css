@@ -1,15 +1,64 @@
 body {
-  font-family: "Arial", sans-serif;
+  font-family: Montserrat;
   margin: 0;
   position: absolute;
   top: 50%;
   left: 50%;
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
+  text-align: center;
 }
 
-section {
-  text-align: center;
+
+.field-title {
+  position: absolute;
+  top: -3px;
+  transform: translateY(-50%);
+  font-weight: 800;
+  color: rgb(0, 0, 0);
+  font-size: 0.65rem;
+  pointer-events: none;
+  user-select: none;
+}
+.range__slider {
+  position: relative;
+  width: 100%;
+  height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.range__slider::after,
+.range__slider::before {
+  position: absolute;
+  color: rgb(0, 0, 0);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+.range__slider::before {
+  content: "4";
+  left: 10px;
+}
+.range__slider::after {
+  content: "12";
+  right: 10px;
+}
+.range__slider .length__title::after {
+  content: attr(data-length);
+  position: absolute;
+  right: -16px;
+  color: rgb(0, 0, 0);
+}
+#slider {
+  -webkit-appearance: none;
+  width: calc(100% - (70px));
+  height: 2px;
+  border-radius: 5px;
+  background: rgba(23, 171, 240, 0.562);
+  outline: 0;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
 }
 
 #game-score-status {
@@ -21,16 +70,16 @@ section {
 }
 .game-grid-container {
   display: grid;
-  grid-template-columns: 6.2% 25% 6.2% 25% 6.2% 25% 6.2%;
-  grid-template-rows: 6.2% 25% 6.2% 25% 6.2% 25% 6.2%;
+  grid-template-columns: 4% 20% 4% 20% 4% 20% 4% 20% 4%;
+  grid-template-rows: 4% 20% 4% 20% 4% 20% 4% 20% 4%;
   width: 350px;
   height: 350px;
-  margin: 8% auto;
+  margin: 5% auto;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 100%;
+  height: 100%;
 
   border-radius: 50px;
   margin: auto;
@@ -38,17 +87,17 @@ section {
 }
 
 .line-horizontal {
-  height: 5px;
+  height: 4%;
   background-color: lightgray;
-  width: 100%;
+  width: 90%;
   cursor: pointer;
   border-radius: 5px;
   margin: auto;
 }
 
 .line-vertical {
-  height: 100%;
-  width: 5px;
+  height: 90%;
+  width: 4%;
   background-color: lightgray;
   cursor: pointer;
   border-radius: 5px;
@@ -75,5 +124,8 @@ section {
   color: rgb(136, 136, 253);
 }
 .box {
-  width: 100%;
+  width: 90%;
+  height: 90%;
+  display: flex;
+  margin: auto;
 }

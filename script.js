@@ -1,6 +1,18 @@
-const N = 4;
-const M = 4;
+function getCSSRule(ruleName) {
+  ruleName = ruleName.toLowerCase();
+  var result = null;
+  var find = Array.prototype.find;
 
+  find.call(document.styleSheets, (styleSheet) => {
+    result = find.call(styleSheet.cssRules, (cssRule) => {
+      return cssRule instanceof CSSStyleRule && cssRule.selectorText.toLowerCase() == ruleName;
+    });
+    return result != null;
+  });
+  return result;
+}
+
+var size = 8;
 let turn = "R";
 let selectedLines = [];
 let filledBox = [];
@@ -9,17 +21,53 @@ const hoverClasses = { R: "hover-red", B: "hover-blue" };
 const bgClasses = { R: "bg-red", B: "bg-blue" };
 let score = { R: 0, B: 0 };
 
-const playersTurnText = (turn) => `It's ${turn === "R" ? "Red" : "Blue"}'s turn`;
-const gameScoreText = (score) => `<span class="txt-red">Red: ${score.R}</span> | <span class="txt-blue">Blue: ${score.B}</span>`;
-const isLineSelected = (line) => line.classList.contains(bgClasses.R) || line.classList.contains(bgClasses.B);
+const playersTurnText = (turn) =>
+  `It's ${
+    turn === "R" ? '<span class="txt-red">Red</span>' : '<span class="txt-blue">Blue</span>'
+  }'s turn`;
+const gameScoreText = (score) =>
+  `<span class="txt-red">Red: ${score.R}</span> | <span class="txt-blue">Blue: ${score.B}</span>`;
+const isLineSelected = (line) =>
+  line.classList.contains(bgClasses.R) || line.classList.contains(bgClasses.B);
+
+const myFunction = (e) => {
+  size = parseInt(e.target.value);
+  document.querySelector(".length__title").setAttribute("data-length", e.target.value);
+  const elements = document.querySelector(".game-grid-container");
+  while (elements.children.length > 0) {
+    elements.removeChild(elements.firstChild);
+  }
+  selectedLines = [];
+  filledBox = [];
+  score = { R: 0, B: 0 };
+  turn = "R";
+  createGameGrid();
+};
+
+const input = document.querySelector("input");
+input.addEventListener("input", myFunction);
 
 const createGameGrid = () => {
   const gameGridContainer = document.querySelector(".game-grid-container");
+  var gridString = "";
+  var dotWidth = 10 / size;
+  var lineWidth = (100 - dotWidth * size) / (size - 1);
 
-  const rows = Array(N)
+  for (let i = 0; i < size; i++) {
+    if (i < size - 1) {
+      gridString = gridString + dotWidth.toString() + "%" + " " + lineWidth.toString() + "%" + " ";
+    } else {
+      gridString = gridString + dotWidth.toString() + "%";
+    }
+  }
+  gameGridContainer.style.gridTemplateColumns = gridString;
+  gameGridContainer.style.gridTemplateRows = gridString;
+
+  var gridString = "";
+  var rows = Array(size)
     .fill(0)
     .map((_, i) => i);
-  const cols = Array(M)
+  var cols = Array(size)
     .fill(0)
     .map((_, i) => i);
 
@@ -34,10 +82,10 @@ const createGameGrid = () => {
       hLine.addEventListener("click", handleLineClick);
 
       gameGridContainer.appendChild(dot);
-      if (col < M - 1) gameGridContainer.appendChild(hLine);
+      if (col < size - 1) gameGridContainer.appendChild(hLine);
     });
 
-    if (row < N - 1) {
+    if (row < size - 1) {
       cols.forEach((col) => {
         const vLine = document.createElement("div");
         vLine.setAttribute("class", `line-vertical ${hoverClasses[turn]}`);
@@ -49,10 +97,14 @@ const createGameGrid = () => {
         box.setAttribute("id", `box-${row}-${col}`);
 
         gameGridContainer.appendChild(vLine);
-        if (col < M - 1) gameGridContainer.appendChild(box);
+        if (col < size - 1) gameGridContainer.appendChild(box);
       });
     }
   });
+
+  getCSSRule(".line-horizontal").style.height = (dotWidth * 3.5).toString() + "px";
+  getCSSRule(".line-vertical").style.width = (dotWidth * 3.5).toString() + "px";
+
   document.getElementById("game-score-status").innerHTML = gameScoreText(score);
   document.getElementById("game-status").innerHTML = playersTurnText(turn);
 };
@@ -62,15 +114,13 @@ const changeTurn = () => {
   document.getElementById("game-status").innerHTML = playersTurnText(nextTurn);
   const lines = document.querySelectorAll(".line-vertical, .line-horizontal");
   lines.forEach((l) => {
-    // if (!isLineSelected(l)) {
     l.classList.replace(hoverClasses[turn], hoverClasses[nextTurn]);
-    // }
   });
   turn = nextTurn;
 };
 
 const boxFill = (boxId, turn) => {
-  document.getElementById(boxId).setAttribute("class", bgClasses[turn]);
+  document.getElementById(boxId).setAttribute("class", bgClasses[turn] + " box");
   if (!filledBox.includes(boxId)) {
     score[turn]++;
     isSquare.bool = true;
@@ -79,80 +129,87 @@ const boxFill = (boxId, turn) => {
 };
 
 const squareCheck = (selectedLines, lineId, turn) => {
+
+  myArray = lineId.split("-");
+  var row = parseInt(myArray[1]);
+  var col = parseInt(myArray[2]);
+
+  console.log(myArray);
+
   isSquare.bool = false;
   const isVertical = lineId[0] == "v";
   if (isVertical) {
-    if (lineId[4] == "3") {
+    if (col == size - 1) {
       if (
-        selectedLines.includes(`v-${lineId[2]}-${parseInt(lineId[4]) - 1}`) &&
-        selectedLines.includes(`h-${parseInt(lineId[2]) + 1}-${parseInt(lineId[4]) - 1}`) &&
-        selectedLines.includes(`h-${parseInt(lineId[2])}-${parseInt(lineId[4]) - 1}`)
+        selectedLines.includes(`v-${row}-${col - 1}`) &&
+        selectedLines.includes(`h-${row + 1}-${col - 1}`) &&
+        selectedLines.includes(`h-${row}-${col - 1}`)
       ) {
-        boxId = `box-${lineId[2]}-${parseInt(lineId[4]) - 1}`;
+        boxId = `box-${row}-${col - 1}`;
         boxFill(boxId, turn);
       }
     }
-    if (lineId[4] == "0") {
+    if (col == "0") {
       if (
-        selectedLines.includes(`v-${lineId[2]}-${parseInt(lineId[4]) + 1}`) &&
-        selectedLines.includes(`h-${parseInt(lineId[2]) + 1}-${parseInt(lineId[4])}`) &&
-        selectedLines.includes(`h-${parseInt(lineId[2])}-${parseInt(lineId[4])}`)
+        selectedLines.includes(`v-${row}-${col + 1}`) &&
+        selectedLines.includes(`h-${row + 1}-${col}`) &&
+        selectedLines.includes(`h-${row}-${col}`)
       ) {
-        boxId = `box-${lineId[2]}-${lineId[4]}`;
+        boxId = `box-${row}-${col}`;
         boxFill(boxId, turn);
       }
     }
     if (
-      selectedLines.includes(`v-${lineId[2]}-${parseInt(lineId[4]) - 1}`) &&
-      selectedLines.includes(`h-${parseInt(lineId[2]) + 1}-${parseInt(lineId[4]) - 1}`) &&
-      selectedLines.includes(`h-${parseInt(lineId[2])}-${parseInt(lineId[4]) - 1}`)
+      selectedLines.includes(`v-${row}-${col - 1}`) &&
+      selectedLines.includes(`h-${row + 1}-${col - 1}`) &&
+      selectedLines.includes(`h-${row}-${col - 1}`)
     ) {
-      boxId = `box-${lineId[2]}-${parseInt(lineId[4]) - 1}`;
+      boxId = `box-${row}-${col - 1}`;
       boxFill(boxId, turn);
     }
     if (
-      selectedLines.includes(`v-${lineId[2]}-${parseInt(lineId[4]) + 1}`) &&
-      selectedLines.includes(`h-${parseInt(lineId[2]) + 1}-${parseInt(lineId[4])}`) &&
-      selectedLines.includes(`h-${parseInt(lineId[2])}-${parseInt(lineId[4])}`)
+      selectedLines.includes(`v-${row}-${col + 1}`) &&
+      selectedLines.includes(`h-${row + 1}-${col}`) &&
+      selectedLines.includes(`h-${row}-${col}`)
     ) {
-      boxId = `box-${lineId[2]}-${lineId[4]}`;
+      boxId = `box-${row}-${col}`;
       boxFill(boxId, turn);
     }
   } else {
-    if (lineId[2] == "3") {
+    if (row == size - 1) {
       if (
-        selectedLines.includes(`h-${parseInt(lineId[2]) - 1}-${parseInt(lineId[4])}`) &&
-        selectedLines.includes(`v-${parseInt(lineId[2]) - 1}-${parseInt(lineId[4])}`) &&
-        selectedLines.includes(`v-${parseInt(lineId[2]) - 1}-${parseInt(lineId[4]) + 1}`)
+        selectedLines.includes(`h-${row - 1}-${col}`) &&
+        selectedLines.includes(`v-${row - 1}-${col}`) &&
+        selectedLines.includes(`v-${row - 1}-${col + 1}`)
       ) {
-        boxId = `box-${parseInt(lineId[2]) - 1}-${parseInt(lineId[4])}`;
+        boxId = `box-${row - 1}-${col}`;
         boxFill(boxId, turn);
       }
     }
-    if (lineId[2] == "0") {
+    if (row == "0") {
       if (
-        selectedLines.includes(`h-${parseInt(lineId[2]) + 1}-${parseInt(lineId[4])}`) &&
-        selectedLines.includes(`v-${parseInt(lineId[2])}-${parseInt(lineId[4])}`) &&
-        selectedLines.includes(`v-${parseInt(lineId[2])}-${parseInt(lineId[4]) + 1}`)
+        selectedLines.includes(`h-${row + 1}-${col}`) &&
+        selectedLines.includes(`v-${row}-${col}`) &&
+        selectedLines.includes(`v-${row}-${col + 1}`)
       ) {
-        boxId = `box-${lineId[2]}-${lineId[4]}`;
+        boxId = `box-${row}-${col}`;
         boxFill(boxId, turn);
       }
     }
     if (
-      selectedLines.includes(`h-${parseInt(lineId[2]) + 1}-${parseInt(lineId[4])}`) &&
-      selectedLines.includes(`v-${parseInt(lineId[2])}-${parseInt(lineId[4])}`) &&
-      selectedLines.includes(`v-${parseInt(lineId[2])}-${parseInt(lineId[4]) + 1}`)
+      selectedLines.includes(`h-${row + 1}-${col}`) &&
+      selectedLines.includes(`v-${row}-${col}`) &&
+      selectedLines.includes(`v-${row}-${col + 1}`)
     ) {
-      boxId = `box-${lineId[2]}-${lineId[4]}`;
+      boxId = `box-${row}-${col}`;
       boxFill(boxId, turn);
     }
     if (
-      selectedLines.includes(`h-${parseInt(lineId[2]) - 1}-${parseInt(lineId[4])}`) &&
-      selectedLines.includes(`v-${parseInt(lineId[2]) - 1}-${parseInt(lineId[4])}`) &&
-      selectedLines.includes(`v-${parseInt(lineId[2]) - 1}-${parseInt(lineId[4]) + 1}`)
+      selectedLines.includes(`h-${row - 1}-${col}`) &&
+      selectedLines.includes(`v-${row - 1}-${col}`) &&
+      selectedLines.includes(`v-${row - 1}-${col + 1}`)
     ) {
-      boxId = `box-${parseInt(lineId[2]) - 1}-${parseInt(lineId[4])}`;
+      boxId = `box-${row - 1}-${col}`;
       boxFill(boxId, turn);
     }
   }
@@ -168,11 +225,15 @@ const handleLineClick = (e) => {
   selectedLines = [...selectedLines, lineId];
   colorLine(selectedLine);
   squareCheck(selectedLines, lineId, turn);
-  if (isSquare.bool) {
-  } else changeTurn();
+  if (!isSquare.bool) changeTurn();
 
   document.getElementById("game-score-status").innerHTML = gameScoreText(score);
-  if (selectedLines.length == 24) document.getElementById("game-status").innerHTML = `won ${score["B"] > score["R"] ? "Blue" : "Red"}`;
+  if (selectedLines.length == 2 * size * (size - 1))
+    document.getElementById("game-status").innerHTML = `${
+      score["B"] > score["R"]
+        ? '<span class="txt-blue">Blue</span>'
+        : '<span class="txt-red">Red</span>'
+    } won`;
 };
 
 const colorLine = (selectedLine) => {
