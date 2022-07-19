@@ -7,7 +7,12 @@ body {
   -ms-transform: translate(-50%, -50%);
   transform: translate(-50%, -50%);
   text-align: center;
+  transition: background 250ms ease;
+  background-color: white;
 }
+
+
+/* ! Size Slider */
 
 .field-title {
   position: absolute;
@@ -20,6 +25,7 @@ body {
   pointer-events: none;
   user-select: none;
 }
+
 .range__slider {
   position: relative;
   width: 100%;
@@ -27,7 +33,9 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 50px;
 }
+
 .range__slider::after,
 .range__slider::before {
   position: absolute;
@@ -35,20 +43,25 @@ body {
   font-size: 0.9rem;
   font-weight: 700;
 }
+
 .range__slider::before {
   content: "4";
   left: 10px;
 }
+
 .range__slider::after {
   content: "12";
   right: 10px;
 }
-.range__slider .length__title::after {
+
+.range__slider .field-title::after {
   content: attr(data-length);
   position: absolute;
   right: -16px;
   color: rgb(0, 0, 0);
+  z-index: -10;
 }
+
 #slider {
   -webkit-appearance: none;
   width: calc(100% - (70px));
@@ -61,6 +74,8 @@ body {
   cursor: pointer;
 }
 
+/* ! Game */
+
 #game-score-status {
   margin-top: 5%;
 }
@@ -68,6 +83,7 @@ body {
 #game-status {
   margin-bottom: 5%;
 }
+
 .game-grid-container {
   display: grid;
   grid-template-columns: 4% 20% 4% 20% 4% 20% 4% 20% 4%;
@@ -106,12 +122,12 @@ body {
 
 .bg-red,
 .hover-red:hover {
-  background-color: rgb(255, 100, 131);
+  background-color: rgb(255, 100, 131) !important;
 }
 
 .bg-blue,
 .hover-blue:hover {
-  background-color: rgb(136, 136, 253);
+  background-color: rgb(136, 136, 253) !important;
 }
 
 .txt-red {
@@ -128,4 +144,69 @@ body {
   height: 90%;
   display: flex;
   margin: auto;
+}
+
+
+
+/* ! Dark Mode */
+
+.dark-mode {
+  background-color: rgb(26, 26, 26);
+  color: white;
+}
+
+.dark-mode .field-title,
+.dark-mode .range__slider::after,
+.dark-mode .range__slider::before,
+.dark-mode .field-title::after {
+  position: absolute;
+  color: white;
+  z-index: 100;
+}
+
+.dark-mode .line-horizontal,
+.dark-mode .line-vertical {
+  background: rgba(211, 211, 211, 0.3);
+}
+
+.dark-mode .dot {
+  background: rgb(216, 216, 216);
+}
+.toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.toggle span {
+  margin: 0 5px;
+}
+.toggle input[type="checkbox"] {
+  display: none;
+}
+.toggle input[type="checkbox"]:checked + label {
+  background: rgb(99, 89, 143);
+}
+.toggle input[type="checkbox"]:checked + label:after {
+  left: calc(100% - 2px);
+  transform: translateX(-100%);
+}
+.toggle label {
+  cursor: pointer;
+  width: 75px;
+  height: 34px;
+  background: rgba(0, 0, 0, 0.27);
+  display: block;
+  border-radius: 40px;
+  position: relative;
+}
+.toggle label:after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 30px;
+  height: 30px;
+  background: #fff;
+  border-radius: 40px;
+  transition: 0.3s;
 }

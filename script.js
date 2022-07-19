@@ -1,3 +1,5 @@
+// ! GetcssRule function for making straight changes to css stylesheet
+
 function getCSSRule(ruleName) {
   ruleName = ruleName.toLowerCase();
   var result = null;
@@ -12,6 +14,7 @@ function getCSSRule(ruleName) {
   return result;
 }
 
+// ! Initial Variables
 var size = 8;
 let turn = "R";
 let selectedLines = [];
@@ -30,9 +33,17 @@ const gameScoreText = (score) =>
 const isLineSelected = (line) =>
   line.classList.contains(bgClasses.R) || line.classList.contains(bgClasses.B);
 
+// ! Dark Mode
+const body = document.querySelector("body");
+darkModeFunction = () => {
+  body.classList.toggle("dark-mode");
+};
+document.querySelector("#toggle-switch").addEventListener("change", darkModeFunction);
+
+// ! Slider
 const myFunction = (e) => {
   size = parseInt(e.target.value);
-  document.querySelector(".length__title").setAttribute("data-length", e.target.value);
+  document.querySelector(".field-title").setAttribute("data-length", e.target.value);
   const elements = document.querySelector(".game-grid-container");
   while (elements.children.length > 0) {
     elements.removeChild(elements.firstChild);
@@ -44,9 +55,10 @@ const myFunction = (e) => {
   createGameGrid();
 };
 
-const input = document.querySelector("input");
+const input = document.querySelector("#slider");
 input.addEventListener("input", myFunction);
 
+// ! Function to make game grid
 const createGameGrid = () => {
   const gameGridContainer = document.querySelector(".game-grid-container");
   var gridString = "";
@@ -109,6 +121,7 @@ const createGameGrid = () => {
   document.getElementById("game-status").innerHTML = playersTurnText(turn);
 };
 
+// ! Function to Change Turns
 const changeTurn = () => {
   const nextTurn = turn === "R" ? "B" : "R";
   document.getElementById("game-status").innerHTML = playersTurnText(nextTurn);
@@ -119,6 +132,7 @@ const changeTurn = () => {
   turn = nextTurn;
 };
 
+//  ! Function to fill a square box
 const boxFill = (boxId, turn) => {
   document.getElementById(boxId).setAttribute("class", bgClasses[turn] + " box");
   if (!filledBox.includes(boxId)) {
@@ -128,8 +142,8 @@ const boxFill = (boxId, turn) => {
   }
 };
 
+// ! Function to check a complete square
 const squareCheck = (selectedLines, lineId, turn) => {
-
   myArray = lineId.split("-");
   var row = parseInt(myArray[1]);
   var col = parseInt(myArray[2]);
@@ -215,6 +229,7 @@ const squareCheck = (selectedLines, lineId, turn) => {
   }
 };
 
+// ! Function to handle line clicks and change turns
 const handleLineClick = (e) => {
   const lineId = e.target.id;
   const selectedLine = document.getElementById(lineId);
@@ -236,6 +251,7 @@ const handleLineClick = (e) => {
     } won`;
 };
 
+// ! Function to color the lines
 const colorLine = (selectedLine) => {
   selectedLine.classList.remove(hoverClasses[turn]);
   selectedLine.classList.add(bgClasses[turn]);
