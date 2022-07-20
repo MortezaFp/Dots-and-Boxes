@@ -15,6 +15,7 @@ function getCSSRule(ruleName) {
 }
 
 // ! Initial Variables
+
 var size = 8;
 let turn = "R";
 let selectedLines = [];
@@ -34,6 +35,7 @@ const isLineSelected = (line) =>
   line.classList.contains(bgClasses.R) || line.classList.contains(bgClasses.B);
 
 // ! Dark Mode
+
 const body = document.querySelector("body");
 darkModeFunction = () => {
   body.classList.toggle("dark-mode");
@@ -59,6 +61,7 @@ const input = document.querySelector("#slider");
 input.addEventListener("input", myFunction);
 
 // ! Function to make game grid
+
 const createGameGrid = () => {
   const gameGridContainer = document.querySelector(".game-grid-container");
   var gridString = "";
@@ -122,6 +125,7 @@ const createGameGrid = () => {
 };
 
 // ! Function to Change Turns
+
 const changeTurn = () => {
   const nextTurn = turn === "R" ? "B" : "R";
   document.getElementById("game-status").innerHTML = playersTurnText(nextTurn);
@@ -133,6 +137,7 @@ const changeTurn = () => {
 };
 
 //  ! Function to fill a square box
+
 const boxFill = (boxId, turn) => {
   document.getElementById(boxId).setAttribute("class", bgClasses[turn] + " box");
   if (!filledBox.includes(boxId)) {
@@ -142,7 +147,8 @@ const boxFill = (boxId, turn) => {
   }
 };
 
-// ! Function to check a complete square
+// ! Function to check a completed square
+
 const squareCheck = (selectedLines, lineId, turn) => {
   myArray = lineId.split("-");
   var row = parseInt(myArray[1]);
@@ -230,6 +236,7 @@ const squareCheck = (selectedLines, lineId, turn) => {
 };
 
 // ! Function to handle line clicks and change turns
+
 const handleLineClick = (e) => {
   const lineId = e.target.id;
   const selectedLine = document.getElementById(lineId);
@@ -243,15 +250,20 @@ const handleLineClick = (e) => {
   if (!isSquare.bool) changeTurn();
 
   document.getElementById("game-score-status").innerHTML = gameScoreText(score);
-  if (selectedLines.length == 2 * size * (size - 1))
-    document.getElementById("game-status").innerHTML = `${
-      score["B"] > score["R"]
-        ? '<span class="txt-blue">Blue</span>'
-        : '<span class="txt-red">Red</span>'
-    } won`;
+  if (selectedLines.length == 2 * size * (size - 1)) {
+    const gameStatus = document.getElementById("game-status");
+    if (score["B"] > score["R"]) {
+      gameStatus.innerHTML = '<span class="txt-blue">Blue</span> Won';
+    } else if (score["B"] > score["R"]) {
+      gameStatus.innerHTML = '<span class="txt-red">Red</span> Won';
+    } else {
+      gameStatus.innerHTML = "Draw";
+    }
+  }
 };
 
 // ! Function to color the lines
+
 const colorLine = (selectedLine) => {
   selectedLine.classList.remove(hoverClasses[turn]);
   selectedLine.classList.add(bgClasses[turn]);
