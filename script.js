@@ -37,7 +37,7 @@ const isLineSelected = (line) =>
 // ! Dark Mode
 
 const body = document.querySelector("body");
-darkModeFunction = () => {
+const darkModeFunction = () => {
   body.classList.toggle("dark-mode");
 };
 document.querySelector("#toggle-switch").addEventListener("change", darkModeFunction);
@@ -78,7 +78,6 @@ const createGameGrid = () => {
   gameGridContainer.style.gridTemplateColumns = gridString;
   gameGridContainer.style.gridTemplateRows = gridString;
 
-  var gridString = "";
   var rows = Array(size)
     .fill(0)
     .map((_, i) => i);
@@ -150,11 +149,9 @@ const boxFill = (boxId, turn) => {
 // ! Function to check a completed square
 
 const squareCheck = (selectedLines, lineId, turn) => {
-  myArray = lineId.split("-");
+  const myArray = lineId.split("-");
   var row = parseInt(myArray[1]);
   var col = parseInt(myArray[2]);
-
-  console.log(myArray);
 
   isSquare.bool = false;
   const isVertical = lineId[0] == "v";
@@ -165,7 +162,7 @@ const squareCheck = (selectedLines, lineId, turn) => {
         selectedLines.includes(`h-${row + 1}-${col - 1}`) &&
         selectedLines.includes(`h-${row}-${col - 1}`)
       ) {
-        boxId = `box-${row}-${col - 1}`;
+        var boxId = `box-${row}-${col - 1}`;
         boxFill(boxId, turn);
       }
     }
@@ -254,7 +251,7 @@ const handleLineClick = (e) => {
     const gameStatus = document.getElementById("game-status");
     if (score["B"] > score["R"]) {
       gameStatus.innerHTML = '<span class="txt-blue">Blue</span> Won';
-    } else if (score["B"] > score["R"]) {
+    } else if (score["B"] < score["R"]) {
       gameStatus.innerHTML = '<span class="txt-red">Red</span> Won';
     } else {
       gameStatus.innerHTML = "Draw";
