@@ -1,19 +1,3 @@
-// ! GetcssRule function for making straight changes to css stylesheet
-
-function getCSSRule(ruleName) {
-  ruleName = ruleName.toLowerCase();
-  var result = null;
-  var find = Array.prototype.find;
-
-  find.call(document.styleSheets, (styleSheet) => {
-    result = find.call(styleSheet.cssRules, (cssRule) => {
-      return cssRule instanceof CSSStyleRule && cssRule.selectorText.toLowerCase() == ruleName;
-    });
-    return result != null;
-  });
-  return result;
-}
-
 // ! Initial Variables
 
 var size = 8;
@@ -116,8 +100,14 @@ const createGameGrid = () => {
     }
   });
 
-  getCSSRule(".line-horizontal").style.height = (dotWidth * 3.5).toString() + "px";
-  getCSSRule(".line-vertical").style.width = (dotWidth * 3.5).toString() + "px";
+  const hLines = document.querySelectorAll(".line-horizontal")
+  hLines.forEach ((line)=> {
+    line.style.height = (dotWidth * 3.5).toString() + "px";
+  })
+  const vLines = document.querySelectorAll(".line-vertical")
+  vLines.forEach ((line)=> {
+    line.style.width = (dotWidth * 3.5).toString() + "px";
+  })
 
   document.getElementById("game-score-status").innerHTML = gameScoreText(score);
   document.getElementById("game-status").innerHTML = playersTurnText(turn);
